@@ -60,7 +60,13 @@ namespace RegexDB
                 agregated.AddRow(newrow);
                 
             }
-            agregated.show(listView1);
+            agregated.show(listView1); 
+            var averagega = regex.Average(0, 1, "GA");
+            var averageils = regex.Average(0, 2, "ILS");
+            var averagegai = regex.Average(0, 3, "GAI");
+            var averagemem = regex.Average(0, 4, "MEM");
+            var averages = averagega.Join(averageils, 0, 0).Join(averagegai,0,0).Join(averagemem,0,0);
+            averages.show(listView2);
         }
     }
 }

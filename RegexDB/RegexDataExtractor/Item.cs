@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RegexDB.RegexDataExtractor
 {
-    class Item
+    class Item:IEquatable<Item>
     {
         public enum TYPE
         {
@@ -50,5 +50,27 @@ namespace RegexDB.RegexDataExtractor
         {
             return decimal.Parse(value.Trim());
         }
+
+
+        public bool Equals(Item other)
+        {
+            if (this.value == other.value)
+                return true;
+            return false;
+        }
+        public class comparer:EqualityComparer<Item>
+        {
+
+            public override bool Equals(Item x, Item y)
+            {
+                return x.Equals(y);
+            }
+
+            public override int GetHashCode(Item obj)
+            {
+                return obj.value.GetHashCode();
+            }
+        }
+        
     }
 }
