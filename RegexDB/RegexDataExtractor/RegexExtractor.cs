@@ -16,9 +16,6 @@ namespace RegexDB.RegexDataExtractor
         }
         public string[] extractFromString(string line, out int charnum)
         {
-
-            //try
-            //{
             Regex regex = new Regex(regexstring);
 
             Match match = regex.Match(line);
@@ -32,11 +29,6 @@ namespace RegexDB.RegexDataExtractor
                 charnum = match.Groups[0].Length;
                 return result;
             }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
             charnum = -1;
             return null;
         }

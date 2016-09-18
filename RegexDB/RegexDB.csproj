@@ -55,7 +55,7 @@
     <Compile Include="RegexDataExtractor\Column.cs" />
     <Compile Include="RegexDataExtractor\Item.cs" />
     <Compile Include="RegexDataExtractor\Row.cs" />
-    <Compile Include="RegexDataExtractor\Storage.cs" />
+    <Compile Include="RegexDataExtractor\Table.cs" />
     <Compile Include="RegexDataExtractor\RegexExtractor.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

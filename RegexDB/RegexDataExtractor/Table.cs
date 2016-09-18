@@ -6,22 +6,24 @@ using System.Threading.Tasks;
 
 namespace RegexDB.RegexDataExtractor
 {
-    class Storage
+    class Table
     {
         RegexExtractor regex;
         public List<Column> columns = new List<Column>();
         public List<Row> rows = new List<Row>();
-        public Storage(string regex, List<Column> columns)
+        public Table(string regex, List<Column> columns)
         {
             this.regex = new RegexExtractor(regex);
             this.columns = columns;
         }
+
+        
         public void print(string lines)
         {
 
 
         }
-        public Storage ExtractFromString(string lines)
+        public Table ExtractFromString(string lines)
         {
             int position = 0;
             while (position < lines.Length)//TODO sugavo
@@ -56,5 +58,46 @@ namespace RegexDB.RegexDataExtractor
                 listview.Items.Add(listViewItem);
             }
         }
+        public Table CloneColumns()
+        {
+            List<Column> newColumns = new List<Column>();
+            foreach(Column column in columns)
+            {
+                newColumns.Add(new Column(column.name));
+            }
+            Table newStorage = new Table(this.regex.regexstring, newColumns);
+            return newStorage;
+        }
+        public void AddRows(IEnumerable<Row> newRows)
+        {
+            foreach(Row row in newRows)
+            {
+                AddRow(row);
+            }
+        }
+        public void AddRow(Row row)
+        {
+            rows.Add(row);
+            for (int i = 0; i < columns.Count; i++)
+            {
+                row.items[i].column = columns[i];
+            }
+        }
+        public Table Where(Func<Row,bool> clause)
+        {
+            Table queryResult = this.CloneColumns();
+            var result = this.rows.Where(clause);
+            queryResult.AddRows(result);
+            return queryResult;
+        }
+        //public Table Select(List<Column> selectedColumns)
+        //{
+        //    Table queryResult = new Table(this.regex.regexstring,
+        //        selectedColumns);
+        //    foreach(Row row in rows)
+        //    {
+
+        //    }
+        //}
     }
 }

@@ -8,7 +8,7 @@ namespace RegexDB.RegexDataExtractor
 {
     class Row
     {
-        List<Item> items = new List<Item>();
+        public List<Item> items = new List<Item>();
         public Item AddItem(Item item)
         {
             item.row = this;
