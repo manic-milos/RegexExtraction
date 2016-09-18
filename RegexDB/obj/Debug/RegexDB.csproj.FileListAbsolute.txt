@@ -1,0 +1,9 @@
+c:\users\master\documents\visual studio 2013\Projects\RegexDB\RegexDB\bin\Debug\RegexDB.exe.config
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\bin\Debug\RegexDB.exe
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\bin\Debug\RegexDB.pdb
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.csprojResolveAssemblyReference.cache
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.Form1.resources
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.Properties.Resources.resources
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.csproj.GenerateResource.Cache
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.exe
+C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\RegexDB\obj\Debug\RegexDB.pdb
