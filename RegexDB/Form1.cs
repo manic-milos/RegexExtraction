@@ -50,19 +50,13 @@ namespace RegexDB
                 Table queryResult = regex.Where(new Func<Row, bool>(row => row.items[0].value == regex.columns[0].items[i].value));
                 Row newrow = new Row();
                 newrow.AddItem(new Item(){value=regex.columns[0].items[i].value});
-                var avg1 = queryResult.rows.Average(
-                    new Func<Row, decimal?>(row => double.IsNaN(row.items[1].getDoubleValue()) ? null : (decimal?)Convert.ToDecimal(row.items[1].getDoubleValue())));
-                newrow.AddItem(new Item(){value=avg1.ToString()});
-                //richTextBox1.Text += regex.columns[0].items[i].value + ":" + avg.ToString() + Environment.NewLine;
-                var avg2 = queryResult.rows.Average(
-                    new Func<Row, decimal?>(row => double.IsNaN(row.items[2].getDoubleValue()) ? null : (decimal?)Convert.ToDecimal(row.items[2].getDoubleValue())));
-                newrow.AddItem(new Item() { value = avg2.ToString() });
-                var avg3 = queryResult.rows.Average(
-                    new Func<Row, decimal?>(row => double.IsNaN(row.items[3].getDoubleValue()) ? null : (decimal?)Convert.ToDecimal(row.items[3].getDoubleValue())));
-                newrow.AddItem(new Item() { value = avg3.ToString() });
-                var avg4 = queryResult.rows.Average(
-                    new Func<Row, decimal?>(row => double.IsNaN(row.items[4].getDoubleValue()) ? null : (decimal?)Convert.ToDecimal(row.items[4].getDoubleValue())));
-                newrow.AddItem(new Item() { value = avg4.ToString() });
+                for (int j = 1; j < 5; j++)
+                {
+                    var avg1 = queryResult.rows.Average(
+                        new Func<Row, decimal?>(row => double.IsNaN(row.items[j].getDoubleValue()) ? null : (decimal?)Convert.ToDecimal(row.items[j].getDoubleValue())));
+                    newrow.AddItem(new Item() { value = avg1.ToString() });
+                    
+                }
                 agregated.AddRow(newrow);
                 
             }
