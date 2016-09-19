@@ -83,12 +83,21 @@ namespace RegexDB.RegexDataExtractor
                 row.items[i].column = columns[i];
             }
         }
+        public int AddColumn(string name)
+        {
+            columns.Add(new Column(name));
+            return columns.Count - 1;
+        }
         public Table Where(Func<Row, bool> clause)
         {
             Table queryResult = this.CloneColumns();
             var result = this.rows.Where(clause);
             queryResult.AddRows(result);
             return queryResult;
+        }
+        public Table Average(int? groupByIndex, string agregatedcolumnname, string resultingColName)
+        {
+            return Average(groupByIndex, getColumnIndexFromName(agregatedcolumnname), resultingColName);
         }
         public virtual Table Average(int? groupByIndex, int agregatedcolumnindex, string resultingColName)
         {
@@ -139,6 +148,34 @@ namespace RegexDB.RegexDataExtractor
                 return average;
             }
 
+        }
+        public Table changeAttrColumnwise(string columnName, Func<Item, Item> change, string newColumnName = null)
+        {
+            return changeAttrColumnwise(getColumnIndexFromName(columnName), change,newColumnName);
+        }
+        public Table changeAttrColumnwise(int columnIndex,Func<Item,Item> change,string newColumnName=null)
+        {
+            if (newColumnName != null)
+            {
+                int newindex=AddColumn(newColumnName);
+                foreach (Item item in columns[columnIndex].items)
+                {
+                    Row row = item.row;
+                    Item newItem = change(item);
+                    columns[newindex].AddItem(newItem);
+                    row.AddItem(newItem);
+                }
+            }
+            else
+            {
+                foreach (Item item in columns[columnIndex].items)
+                {
+                    Row row = item.row;
+                    Item newItem = change(item);
+                    item.value = newItem.value;
+                }
+            }
+            return this;
         }
         public virtual Table Aggregate(int? groupByIndex, int agregatedcolumnindex, string resultingColName)
         {
@@ -236,6 +273,17 @@ namespace RegexDB.RegexDataExtractor
                 }
             }
             return result;
+        }
+        public int getColumnIndexFromName(string s)
+        {
+            for(int i=0;i<columns.Count;i++)
+            {
+                if(columns[i].name==s)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("No column with that name!");
         }
         //public Table Select(List<Column> selectedColumns)
         //{

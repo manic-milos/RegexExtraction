@@ -44,13 +44,22 @@ namespace RegexDB.RegexDataExtractor
         }
         public double getDoubleValue()
         {
-            return double.Parse(value.Trim());
+            double returnvalue;
+            if (double.TryParse(value.Trim(), out returnvalue) == false)
+            {
+                TimeSpan time;
+                if(TimeSpan.TryParse(value.Trim(),out time)==true)
+                {
+                    returnvalue = time.TotalSeconds;
+                }
+            }
+            return returnvalue;
         }
         public decimal getDecimalValue()
         {
             return decimal.Parse(value.Trim());
         }
-
+        
 
         public bool Equals(Item other)
         {
@@ -58,6 +67,7 @@ namespace RegexDB.RegexDataExtractor
                 return true;
             return false;
         }
+
         public class comparer:EqualityComparer<Item>
         {
 
@@ -71,6 +81,5 @@ namespace RegexDB.RegexDataExtractor
                 return obj.value.GetHashCode();
             }
         }
-        
     }
 }
