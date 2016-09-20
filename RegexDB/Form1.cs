@@ -187,6 +187,15 @@ namespace RegexDB
 
             var results=sol.Join(t,0,0).Join(ttot,0,0).Join(gen,0,0).Join(eval,0,0).Join(cache,0,0);
 
+            StreamReader fileBestsol = new StreamReader(@"C:\Users\master\Downloads\CFLP GA\bestsol.txt");
+            Table bestSol = new Table("([a-zA-Z0-9_])\\s+([0-9]+)\\s+", new List<Column>()
+                {
+                    new Column("name"),
+                    new Column("bestsol")
+                });
+            bestSol.ExtractFromString(fileBestsol.ReadToEnd());
+            fileBestsol.Dispose();
+            results.Join(bestSol, 0, 0);
             regex.show(listView1);
             results.show(listView2);
         }

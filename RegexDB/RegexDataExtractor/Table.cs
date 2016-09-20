@@ -177,55 +177,31 @@ namespace RegexDB.RegexDataExtractor
             }
             return this;
         }
-        public virtual Table Aggregate(int? groupByIndex, int agregatedcolumnindex, string resultingColName)
+        public Table operation(Func<Row,string> op,int existingColumnIndex=-1,string newColumnName=null)
         {
-            int groupBy;
-            if (groupByIndex.HasValue)
+            if(existingColumnIndex>=0)
             {
-                groupBy = groupByIndex.Value;
-
-                Table average = new Table("", new List<Column>(){
-                    new Column(columns[groupBy].name),
-                    new Column(resultingColName)});
-                var distinct = columns[groupBy].items.Distinct(new Item.comparer());
-                int distcont = distinct.Count();
-                foreach (Item item in distinct)
+                foreach(Row row in rows)
                 {
-                    Table queryResult = this.Where(
-                        new Func<Row, bool>(
-                            row => row.items[groupBy].value == item.value));
-                    Row newrow = new Row();
-                    newrow.AddItem(new Item() { value = item.value });
-                    var avg1 = queryResult.rows.Average(
-                        new Func<Row, decimal?>(
-                            row =>
-                                double.IsNaN(row.items[agregatedcolumnindex].getDoubleValue()) ?
-                                null :
-                                (decimal?)Convert.ToDecimal(row.items[agregatedcolumnindex].getDoubleValue())));
-                    newrow.AddItem(new Item() { value = avg1.ToString() });
-                    average.AddRow(newrow);
+                    string result=op(row);
+                    row.items[existingColumnIndex].value = result;
                 }
-                return average;
-
+            }
+            else if(newColumnName!=null)
+            {
+                int newColumnIndex=AddColumn(newColumnName);
+                foreach (Row row in rows)
+                {
+                    string result = op(row);
+                    Item item=row.AddItem(new Item() { value = result });
+                    columns[newColumnIndex].AddItem(item);
+                }
             }
             else
             {
-                groupBy = -1;
-
-                Table average = new Table("", new List<Column>(){
-                    new Column(resultingColName)});
-                Row newrow = new Row();
-                var avg1 = this.rows.Average(
-                        new Func<Row, decimal?>(
-                            row =>
-                                double.IsNaN(row.items[agregatedcolumnindex].getDoubleValue()) ?
-                                null :
-                                (decimal?)Convert.ToDecimal(row.items[agregatedcolumnindex].getDoubleValue())));
-                newrow.AddItem(new Item() { value = avg1.ToString() });
-                average.AddRow(newrow);
-                return average;
+                throw new Exception("No column for storing result given!");
             }
-
+            return this;
         }
         public Table Join(Table other,int joinIndex1,int joinIndex2)
         {
@@ -285,9 +261,16 @@ namespace RegexDB.RegexDataExtractor
             }
             throw new Exception("No column with that name!");
         }
+        public int this[string key]
+        {
+            get
+            {
+                return getColumnIndexFromName(key);
+            }
+        }
         //public Table Select(List<Column> selectedColumns)
         //{
-        //    Table queryResult = new Table(this.regex.regexstring,
+        //    Table queryResult = new Table("",
         //        selectedColumns);
         //    foreach(Row row in rows)
         //    {
