@@ -166,6 +166,46 @@ namespace RegexDB
                 file1.Dispose();
             }
 
+            //extract bestsol
+            StreamReader fileBestsol = new StreamReader(@"C:\Users\master\Documents\Visual Studio 2013\Projects\RegexDB\bestsol.txt.txt");
+            Table bestSol = new Table("([a-zA-Z0-9_]+)\\s+([0-9]+)\\s+", new List<Column>()
+                {
+                    new Column("name"),
+                    new Column("bestsol")
+                });
+            bestSol.ExtractFromString(fileBestsol.ReadToEnd());
+            fileBestsol.Dispose();
+
+            //join best results with table
+            regex = regex.Join(bestSol, 0, 0);
+
+            //substract for error
+            regex = regex.operation(new Func<Row, string>(
+                row => Math.Abs(row.items[regex["GA result"]].getDoubleValue() - row.items[regex["bestsol"]].getDoubleValue()).ToString()), -1, "GAagap");
+            regex = regex.operation(new Func<Row, string>(
+                row => Math.Abs(row.items[regex["ILS result"]].getDoubleValue() - row.items[regex["bestsol"]].getDoubleValue()).ToString()), -1, "ILSagap");
+            regex = regex.operation(new Func<Row, string>(
+                row => Math.Abs(row.items[regex["GAA result"]].getDoubleValue() - row.items[regex["bestsol"]].getDoubleValue()).ToString()), -1, "GAAagap");
+            regex = regex.operation(new Func<Row, string>(
+                row => Math.Abs(row.items[regex["Mem result"]].getDoubleValue() - row.items[regex["bestsol"]].getDoubleValue()).ToString()), -1, "MEMagap");
+
+            //make percentage
+            regex = regex.operation(new Func<Row, string>(
+                row => (row.items[regex["GAagap"]].getDoubleValue() / row.items[regex["bestsol"]].getDoubleValue()).ToString()
+                ), regex["GAagap"]);
+            regex = regex.operation(new Func<Row, string>(
+                row => (row.items[regex["ILSagap"]].getDoubleValue() / row.items[regex["bestsol"]].getDoubleValue()).ToString()
+                ), regex["ILSagap"]);
+            regex = regex.operation(new Func<Row, string>(
+                row => (row.items[regex["GAAagap"]].getDoubleValue() / row.items[regex["bestsol"]].getDoubleValue()).ToString()
+                ), regex["GAAagap"]);
+            regex = regex.operation(new Func<Row, string>(
+                row => (row.items[regex["MEMagap"]].getDoubleValue() / row.items[regex["bestsol"]].getDoubleValue()).ToString()
+                ), regex["MEMagap"]);
+
+
+            //var sol1 = regex.Average(0, "bestsol", "bestbest");
+            //aggregate
             var sol = regex.Average(0, "GA result", "GAsol").Join(regex.Average(0, "ILS result", "ILSsol"), 0, 0);
             sol = sol.Join(regex.Average(0, "GAA result", "GAAsol"), 0, 0).Join(regex.Average(0, "Mem result", "MEMsol"), 0, 0);
 
@@ -184,20 +224,58 @@ namespace RegexDB
             var cache = regex.Average(0, "GA cache hits", "GAcache").Join(regex.Average(0, "ILS cache hits", "ILScache"), 0, 0);
             cache = cache.Join(regex.Average(0, "GAA cache hits", "GAAcache"), 0, 0).Join(regex.Average(0, "Mem cache hits", "MEMcache"), 0, 0);
 
+            var agap = regex.Average(0, "GAagap", "GAaagap").Join(regex.Average(0, "ILSagap", "ILSaagap"), 0, 0);
+            agap = agap.Join(regex.Average(0, "GAAagap", "GAAaagap"), 0, 0).Join(regex.Average(0, "MEMagap", "MEMaagap"), 0, 0);
 
-            var results=sol.Join(t,0,0).Join(ttot,0,0).Join(gen,0,0).Join(eval,0,0).Join(cache,0,0);
+            var results=sol.Join(t,0,0).Join(ttot,0,0).Join(gen,0,0).Join(eval,0,0).Join(cache,0,0).Join(agap,0,0);
 
-            StreamReader fileBestsol = new StreamReader(@"C:\Users\master\Downloads\CFLP GA\bestsol.txt");
-            Table bestSol = new Table("([a-zA-Z0-9_])\\s+([0-9]+)\\s+", new List<Column>()
-                {
-                    new Column("name"),
-                    new Column("bestsol")
-                });
-            bestSol.ExtractFromString(fileBestsol.ReadToEnd());
-            fileBestsol.Dispose();
-            results.Join(bestSol, 0, 0);
+            var sigma=regex.Select(new List<string>(){"name","GAagap","ILSagap","GAAagap","MEMagap"}).Join(agap, 0, 0);
+            sigma = sigma.operation(new Func<Row, string>(
+                row => Math.Pow(row.items[sigma["GAagap"]].getDoubleValue() - row.items[sigma["GAaagap"]].getDoubleValue(), 2).ToString()
+                ),-1,"GAsigma");
+            sigma = sigma.operation(new Func<Row, string>(
+                row => Math.Pow(row.items[sigma["ILSagap"]].getDoubleValue() - row.items[sigma["ILSaagap"]].getDoubleValue(), 2).ToString()
+                ), -1, "ILSsigma");
+            sigma = sigma.operation(new Func<Row, string>(
+                row => Math.Pow(row.items[sigma["GAAagap"]].getDoubleValue() - row.items[sigma["GAAaagap"]].getDoubleValue(), 2).ToString()
+                ), -1, "GAAsigma");
+            sigma = sigma.operation(new Func<Row, string>(
+                row => Math.Pow(row.items[sigma["MEMagap"]].getDoubleValue() - row.items[sigma["MEMaagap"]].getDoubleValue(), 2).ToString()
+                ), -1, "MEMsigma");
+            var asigma = sigma.Average(0, "GAsigma", "GAsigma").Join(sigma.Average(0, "ILSsigma", "ILSsigma"), 0, 0);
+            asigma=asigma.Join(sigma.Average(0,"GAAsigma","GAAsigma"),0,0).Join(sigma.Average(0,"MEMsigma","MEMsigma"),0,0);
+            asigma = asigma.operation(new Func<Row, string>(
+                row => Math.Sqrt(row.items[asigma["GAsigma"]].getDoubleValue()).ToString()
+                ),asigma["GAsigma"]);
+            asigma = asigma.operation(new Func<Row, string>(
+               row => Math.Sqrt(row.items[asigma["ILSsigma"]].getDoubleValue()).ToString()
+               ),asigma["GAsigma"]);
+            asigma = asigma.operation(new Func<Row, string>(
+               row => Math.Sqrt(row.items[asigma["GAAsigma"]].getDoubleValue()).ToString()
+               ), asigma["GAsigma"]);
+            asigma = asigma.operation(new Func<Row, string>(
+               row => Math.Sqrt(row.items[asigma["MEMsigma"]].getDoubleValue()).ToString()
+               ), asigma["GAsigma"]);
+            results = results.Join(asigma, 0, 0);
+            results = results.operation(new Func<Row, string>(
+                row => (row.items[results["GAcache"]].getDoubleValue() / row.items[results["GAeval"]].getDoubleValue()) * 100 + ""
+                ),-1,"GAcachepercent");
+            results = results.operation(new Func<Row, string>(
+                row => (row.items[results["ILScache"]].getDoubleValue() / row.items[results["ILSeval"]].getDoubleValue()) * 100 + ""
+                ), -1, "ILScachepercent");
+            results = results.operation(new Func<Row, string>(
+                row => (row.items[results["GAAcache"]].getDoubleValue() / row.items[results["GAAeval"]].getDoubleValue()) * 100 + ""
+                ), -1, "GAAcachepercent");
+            results = results.operation(new Func<Row, string>(
+                row => (row.items[results["MEMcache"]].getDoubleValue() / row.items[results["MEMeval"]].getDoubleValue()) * 100 + ""
+                ), -1, "MEMcachepercent");
+            results=results.Join(bestSol, 0, 0);
             regex.show(listView1);
+            results.fixDoubleFormat("F");
             results.show(listView2);
+            LaTexWriter latexWriter = new LaTexWriter(results);
+            string latexshow = results.show(latexWriter);
+            richTextBox1.Text = latexshow;
         }
     }
 }

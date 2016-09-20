@@ -54,9 +54,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexDataExtractor\Column.cs" />
     <Compile Include="RegexDataExtractor\Item.cs" />
+    <Compile Include="RegexDataExtractor\LaTexWriter.cs" />
     <Compile Include="RegexDataExtractor\Row.cs" />
     <Compile Include="RegexDataExtractor\Table.cs" />
     <Compile Include="RegexDataExtractor\RegexExtractor.cs" />
+    <Compile Include="RegexDataExtractor\TableWriter.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

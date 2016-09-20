@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,6 +82,7 @@ namespace RegexDB.RegexDataExtractor
             for (int i = 0; i < columns.Count; i++)
             {
                 row.items[i].column = columns[i];
+                columns[i].AddItem(row.items[i]);
             }
         }
         public int AddColumn(string name)
@@ -268,14 +270,48 @@ namespace RegexDB.RegexDataExtractor
                 return getColumnIndexFromName(key);
             }
         }
-        //public Table Select(List<Column> selectedColumns)
-        //{
-        //    Table queryResult = new Table("",
-        //        selectedColumns);
-        //    foreach(Row row in rows)
-        //    {
-
-        //    }
-        //}
+        public Table Select(List<string> selectedColumns)
+        {
+            List<int> indexes = new List<int>();
+            foreach(string name in selectedColumns)
+            {
+                indexes.Add(getColumnIndexFromName(name));
+            }
+            return Select(indexes);
+        }
+        public Table Select(List<int> selectedColumnIndexes)
+        {
+            Table queryResult = new Table("",
+                new List<Column>());
+            List<Column> selectedColumns = new List<Column>();
+            foreach(int index in selectedColumnIndexes)
+            {
+                queryResult.AddColumn(columns[index].name);
+            }
+            foreach (Row row in rows)
+            {
+                Row newRow = new Row();
+                foreach(int index in selectedColumnIndexes)
+                {
+                    newRow.AddItem(row.items[index]);
+                }
+                queryResult.AddRow(newRow);
+            }
+            return queryResult;
+        }
+        public string show(TableWriter writer)
+        {
+            return writer.get(this);
+        }
+        public void fixDoubleFormat(string format)
+        {
+            foreach(Row row in rows)
+            {
+                foreach(Item item in row.items)
+                {
+                    item.fixDoubleOutput(format);
+                }
+            }
+        }
     }
 }

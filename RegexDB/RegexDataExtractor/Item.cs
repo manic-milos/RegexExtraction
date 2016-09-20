@@ -44,7 +44,7 @@ namespace RegexDB.RegexDataExtractor
         }
         public double getDoubleValue()
         {
-            double returnvalue;
+            double returnvalue=double.NaN;
             if (double.TryParse(value.Trim(), out returnvalue) == false)
             {
                 TimeSpan time;
@@ -60,6 +60,14 @@ namespace RegexDB.RegexDataExtractor
             return decimal.Parse(value.Trim());
         }
         
+        public void fixDoubleOutput(string format)
+        {
+            double g;
+            if(double.TryParse(value,out g))
+            {
+                value = g.ToString(format);
+            }
+        }
 
         public bool Equals(Item other)
         {
@@ -67,7 +75,7 @@ namespace RegexDB.RegexDataExtractor
                 return true;
             return false;
         }
-
+        
         public class comparer:EqualityComparer<Item>
         {
 
