@@ -53,8 +53,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexDataExtractor\Column.cs" />
+    <Compile Include="RegexDataExtractor\InstanceLatexWriter.cs" />
     <Compile Include="RegexDataExtractor\Item.cs" />
-    <Compile Include="RegexDataExtractor\LaTexWriter.cs" />
+    <Compile Include="RegexDataExtractor\SveLatexWriter.cs" />
     <Compile Include="RegexDataExtractor\Row.cs" />
     <Compile Include="RegexDataExtractor\Table.cs" />
     <Compile Include="RegexDataExtractor\RegexExtractor.cs" />

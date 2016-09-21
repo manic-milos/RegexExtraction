@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RegexDB.RegexDataExtractor
 {
-    class LaTexWriter : TableWriter
+    class SveLatexWriter : TableWriter
     {
         Table table;
         string mm_header = @"\begin{table}\hskip-4.0cm" +
@@ -21,14 +21,14 @@ namespace RegexDB.RegexDataExtractor
                 ;
         string mm_footer = @"\end{tabular}" +
                 @"\end{table}";
-        string m_header = @"\begin{longtabu} to 1.3\textwidth {| X[1] | X[1.1] | X[2] | X[0.8]  X [0.6] X[0.6]  X[1.5]  X[1.5]  X[0.8] X [0.5] X[0.5]}"
-                            + @"\caption{Eksperimentalni rezultati.\label{long}}\\"
+        string m_header = @"\begin{longtabu} to 1.3\textwidth {| X[1] | X[1.1] | X[2] | X[0.8]  X [0.6] X[0.6]  X[1.5]  X[1.5]  X[0.8] X [0.5] X[0.5]} "
+                            + @"\caption{Eksperimentalni rezultati.\label{long}}\\ "
 
-                             + @"Instanca  & metoda & $sol$ & $t_{tot}[s]$ & $t_{best}[s]$ & $gen$ & $eval$ &$caching$&  $agap[\%]$ & $\sigma$&$cache$ \\ \hline"
+                             + @"Instanca  & metoda & $sol$ & $t_{tot}[s]$ & $t_{best}[s]$ & $gen$ & $eval$ &$caching$&  $agap[\%]$ & $\sigma$&$cache$ \\ \hline "
                              + @"\endfirsthead\hline\endfoot "
-                             + @"Instanca  & metoda & $sol$ & $t_{tot}[s]$ & $t_{best}[s]$ & $gen$ & $eval$ &$caching$&  $agap[\%]$ & $\sigma$&$cache$ \\ \hline"
-                             + @"\endhead\hline"
-                             + @"\hline\endlastfoot"
+                             + @"Instanca  & metoda & $sol$ & $t_{tot}[s]$ & $t_{best}[s]$ & $gen$ & $eval$ &$caching$&  $agap[\%]$ & $\sigma$&$cache$ \\ \hline "
+                             + @"\endhead\hline " 
+                             + @"\hline\endlastfoot "
                              ;
         string m_footer = @"\end{longtabu}";
         public override string header
@@ -52,7 +52,7 @@ namespace RegexDB.RegexDataExtractor
                 return m_pattern;
             }
         }
-        public LaTexWriter(Table table)
+        public SveLatexWriter(Table table)
         {
             this.table = table;
         }

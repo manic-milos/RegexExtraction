@@ -215,8 +215,8 @@ namespace RegexDB
             var ttot = regex.Average(0, "GA time", "GAttot").Join(regex.Average(0, "ILS time", "ILSttot"), 0, 0);
             ttot = ttot.Join(regex.Average(0, "GAA time", "GAAttot"), 0, 0).Join(regex.Average(0, "Mem time", "MEMttot"), 0, 0);
 
-            var gen = regex.Average(0, "GA generations", "GAgen");
-            gen = gen.Join(regex.Average(0, "GAA generations", "GAAgen"), 0, 0).Join(regex.Average(0, "Mem generations", "MEMgen"), 0, 0);
+            var gen = regex.Average(0, "GA iterationsToBest", "GAgen").Join(regex.Average(0, "ILS iterations to best", "ILSiter"), 0, 0);
+            gen = gen.Join(regex.Average(0, "GAA iterationsToBest", "GAAgen"), 0, 0).Join(regex.Average(0, "Mem iterationsToBest", "MEMgen"), 0, 0);
 
             var eval = regex.Average(0, "GA eval calls", "GAeval").Join(regex.Average(0, "ILS eval calls", "ILSeval"), 0, 0);
             eval = eval.Join(regex.Average(0, "GAA eval calls", "GAAeval"), 0, 0).Join(regex.Average(0, "Mem eval calls", "MEMeval"), 0, 0);
@@ -271,11 +271,20 @@ namespace RegexDB
                 ), -1, "MEMcachepercent");
             results=results.Join(bestSol, 0, 0);
             regex.show(listView1);
-            results.fixDoubleFormat("F");
-            results.show(listView2);
-            LaTexWriter latexWriter = new LaTexWriter(results);
+            results.fixDoubleFormat("F2");
+            //results.show(listView2);
+            SveLatexWriter latexWriter = new SveLatexWriter(results);
             string latexshow = results.show(latexWriter);
             richTextBox1.Text = latexshow;
+            var instancesTable = regex.Average(0, "n","n").Join(regex.Average(0,"m","m"),0,0).Join(regex.Average(0,"k","k"),0,0);
+            int ind = regex.getColumnIndexFromName("bestsol");
+            var large = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ||
+                row.items[0].value.Contains("capb")));
+            var medium=instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn")));
+            var small = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn") ? false : true));
+            small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ? false : true));
+            small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capb") ? false : true));
+            richTextBox1.Text = large.show(new InstanceLatexWriter());
         }
     }
 }
