@@ -245,16 +245,16 @@ namespace RegexDB
             var asigma = sigma.Average(0, "GAsigma", "GAsigma").Join(sigma.Average(0, "ILSsigma", "ILSsigma"), 0, 0);
             asigma=asigma.Join(sigma.Average(0,"GAAsigma","GAAsigma"),0,0).Join(sigma.Average(0,"MEMsigma","MEMsigma"),0,0);
             asigma = asigma.operation(new Func<Row, string>(
-                row => Math.Sqrt(row.items[asigma["GAsigma"]].getDoubleValue()).ToString()
+                row => (Math.Sqrt(row.items[asigma["GAsigma"]].getDoubleValue())*100).ToString()
                 ),asigma["GAsigma"]);
             asigma = asigma.operation(new Func<Row, string>(
-               row => Math.Sqrt(row.items[asigma["ILSsigma"]].getDoubleValue()).ToString()
+               row => (Math.Sqrt(row.items[asigma["ILSsigma"]].getDoubleValue())*100).ToString()
                ),asigma["GAsigma"]);
             asigma = asigma.operation(new Func<Row, string>(
-               row => Math.Sqrt(row.items[asigma["GAAsigma"]].getDoubleValue()).ToString()
+               row => (Math.Sqrt(row.items[asigma["GAAsigma"]].getDoubleValue())*100).ToString()
                ), asigma["GAsigma"]);
             asigma = asigma.operation(new Func<Row, string>(
-               row => Math.Sqrt(row.items[asigma["MEMsigma"]].getDoubleValue()).ToString()
+               row => (Math.Sqrt(row.items[asigma["MEMsigma"]].getDoubleValue())*100).ToString()
                ), asigma["GAsigma"]);
             results = results.Join(asigma, 0, 0);
             results = results.operation(new Func<Row, string>(
@@ -271,20 +271,28 @@ namespace RegexDB
                 ), -1, "MEMcachepercent");
             results=results.Join(bestSol, 0, 0);
             regex.show(listView1);
+            results.operation(new Func<Row, string>(row =>
+                (row.items[results["GAaagap"]].getDoubleValue() * 100).ToString()), results["GAaagap"]);
+            results.operation(new Func<Row, string>(row =>
+                (row.items[results["ILSaagap"]].getDoubleValue() * 100).ToString()), results["ILSaagap"]);
+            results.operation(new Func<Row, string>(row =>
+                (row.items[results["GAAaagap"]].getDoubleValue() * 100).ToString()), results["GAAaagap"]);
+            results.operation(new Func<Row, string>(row =>
+                (row.items[results["MEMaagap"]].getDoubleValue() * 100).ToString()), results["MEMaagap"]);
             results.fixDoubleFormat("F2");
-            //results.show(listView2);
+            results.show(listView2);
             SveLatexWriter latexWriter = new SveLatexWriter(results);
             string latexshow = results.show(latexWriter);
             richTextBox1.Text = latexshow;
-            var instancesTable = regex.Average(0, "n","n").Join(regex.Average(0,"m","m"),0,0).Join(regex.Average(0,"k","k"),0,0);
-            int ind = regex.getColumnIndexFromName("bestsol");
-            var large = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ||
-                row.items[0].value.Contains("capb")));
-            var medium=instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn")));
-            var small = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn") ? false : true));
-            small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ? false : true));
-            small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capb") ? false : true));
-            richTextBox1.Text = large.show(new InstanceLatexWriter());
+            //var instancesTable = regex.Average(0, "n","n").Join(regex.Average(0,"m","m"),0,0).Join(regex.Average(0,"k","k"),0,0);
+            //int ind = regex.getColumnIndexFromName("bestsol");
+            //var large = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ||
+            //    row.items[0].value.Contains("capb")));
+            //var medium=instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn")));
+            //var small = instancesTable.Where(new Func<Row, bool>(row => row.items[0].value.Contains("pn") ? false : true));
+            //small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capa") ? false : true));
+            //small = small.Where(new Func<Row, bool>(row => row.items[0].value.Contains("capb") ? false : true));
+            //richTextBox1.Text = large.show(new InstanceLatexWriter());
         }
     }
 }
